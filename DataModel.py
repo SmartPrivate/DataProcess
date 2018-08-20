@@ -1,5 +1,5 @@
 import logging
-from sqlalchemy import Column, NVARCHAR, Integer, TEXT, DATETIME, BOOLEAN
+from sqlalchemy import Column, NVARCHAR, Integer, TEXT, DATETIME, BOOLEAN, VARCHAR
 from sqlalchemy.ext.declarative import declarative_base
 
 logging.basicConfig(format='%(asctime)s:%(levelname)s:%(message)s', level=logging.INFO)
@@ -108,15 +108,120 @@ class Zhihu(Base):
     comment_num = Column(Integer)
 
 
+class ZhihuClean(Base):
+    __tablename__ = 'T_Zhihu_cleanfinish'
+
+    sid = Column(Integer, primary_key=True)
+    url = Column(NVARCHAR(100))
+    author = Column(NVARCHAR(50))
+    question = Column(TEXT)
+    answer = Column(TEXT)
+    post_date = Column(DATETIME)
+    like_num = Column(Integer)
+    comment_num = Column(Integer)
+
+
+class ZhihuCleanCopy(Base):
+    __tablename__ = 'T_Zhihu_cleanfinish_copy1'
+
+    sid = Column(Integer, primary_key=True)
+    url = Column(NVARCHAR(100))
+    author = Column(NVARCHAR(50))
+    question = Column(TEXT)
+    answer = Column(TEXT)
+    post_date = Column(DATETIME)
+    like_num = Column(Integer)
+    comment_num = Column(Integer)
+
+
+class ZhihuCut(Base):
+    __tablename__ = 'T_Zhihu_Cut'
+    sid = Column(Integer, primary_key=True)
+    zhihu_sid = Column(Integer)
+    zhihu_answer = Column(TEXT)
+    answer_word_cut = Column(TEXT)
+    words_vector = Column(TEXT)
+
+
+class ZhihuWord2Vec(Base):
+    __tablename__ = 'T_Zhihu_Word2Vec'
+    sid = Column(Integer, primary_key=True)
+    zhihu_sid = Column(Integer)
+    word = Column(VARCHAR(255))
+    vector = Column(TEXT)
+
+
 class Weibo(Base):
     __tablename__ = 'T_Weibo'
 
     sid = Column(Integer, primary_key=True)
     url = Column(NVARCHAR(255))
     author = Column(NVARCHAR(100))
-    content = Column(TEXT)
+    weibo_content = Column(TEXT)
     publish_time = Column(DATETIME)
+    device = Column(NVARCHAR(255))
     retweet = Column(Integer)
     comment = Column(Integer)
-    like = Column(Integer)
-    emoji = Column(NVARCHAR(20))
+    weibo_like = Column(Integer)
+    emoji = Column(NVARCHAR(50))
+
+
+class WeiboClean(Base):
+    __tablename__ = 'T_Weibo_cleanfinish'
+
+    sid = Column(Integer, primary_key=True)
+    url = Column(NVARCHAR(255))
+    author = Column(NVARCHAR(100))
+    weibo_content = Column(TEXT)
+    publish_time = Column(DATETIME)
+    device = Column(NVARCHAR(255))
+    retweet = Column(Integer)
+    comment = Column(Integer)
+    weibo_like = Column(Integer)
+    emoji = Column(NVARCHAR(50))
+
+
+class WeiboCut(Base):
+    __tablename__ = 'T_Weibo_Cut'
+    sid = Column(Integer, primary_key=True)
+    weibo_sid = Column(Integer)
+    weibo_content = Column(TEXT)
+    word_cut = Column(TEXT)
+    words_vector = Column(TEXT)
+
+
+class WeiboWord2Vec(Base):
+    __tablename__ = 'T_Weibo_Word2Vec'
+    sid = Column(Integer, primary_key=True)
+    weibo_sid = Column(Integer)
+    word = Column(VARCHAR(255))
+    vector = Column(TEXT)
+
+
+class Word2VecBaidu(Base):
+    __tablename__ = 'D_Word2Vec_Baidu'
+    sid = Column(Integer, primary_key=True)
+    word = Column(VARCHAR(100))
+    vector = Column(TEXT)
+
+
+class Word2Vec(Base):
+    __tablename__ = 'D_Word2Vec'
+    sid = Column(Integer, primary_key=True)
+    word = Column(VARCHAR(100))
+    vector = Column(TEXT)
+
+
+class DBLP(Base):
+    __tablename__ = 'T_DBLP'
+
+    sid = Column(Integer, primary_key=True)
+    title = Column(TEXT)
+    author = Column(TEXT)
+    pages = Column(NVARCHAR(50))
+    year = Column(Integer)
+    volume = Column(NVARCHAR(50))
+    journal = Column(TEXT)
+    number = Column(NVARCHAR(50))
+    url = Column(TEXT)
+    ee = Column(TEXT)
