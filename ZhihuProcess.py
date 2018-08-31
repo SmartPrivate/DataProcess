@@ -5,6 +5,7 @@ import DBConnector
 import re
 import WordCutter
 import json
+import sys
 
 logging.basicConfig(format='%(asctime)s:%(levelname)s:%(message)s', level=logging.INFO)
 
@@ -60,10 +61,11 @@ def add_zhihu_data_to_db():
 
 def zhihu_word_cut():
     models = DBConnector.query_all(DataModel.ZhihuClean)
+    cutter = WordCutter.WordCut(stop_word_list='stoplist_最终使用版.txt')
     cut_model_list = []
     for model in models:
         model: DataModel.ZhihuClean
-        result_code, result, result_json = WordCutter.word_cut_baiduyun(model.answer)
+        result_code, result, result_json = cutter.word_cut_baiduyun(model.answer)
         if result_code != 0:
             print(model.sid)
             print(result)
@@ -105,7 +107,7 @@ def zhihu_clean():
 def too_long_process():
     models = DBConnector.query_all(DataModel.ZhihuCut)
     cutter = WordCutter.WordCut(stop_word_list='stoplist_最终使用版.txt')
-    long_str_list = []
+
     for model in models:
         model: DataModel.ZhihuCut
         if len(model.zhihu_answer) < 10000:
@@ -113,12 +115,13 @@ def too_long_process():
         if 'key' not in model.answer_word_cut:
             continue
         short_str_list = cut_str_by_length(model.zhihu_answer, 5000)
+        long_str_list = []
         for item in short_str_list:
             result_code, result, result_json = cutter.word_cut_baiduyun(item)
             long_str_list.append(result)
-        result_str='\t'.join(long_str_list)
+        result_str = '\t'.join(long_str_list)
         print(result_str)
-        DBConnector.update_zhihu_data_by_sid(model.sid, result_str)
+        DBConnector.update_zhihu_cut_by_sid(model.sid, result_str)
 
 
 def cut_str_by_length(process_str, length):
@@ -134,4 +137,36 @@ def cut_str_by_length(process_str, length):
     return cut_str_list
 
 
-too_long_process()
+def error_process():
+    models = DBConnector.query_all(DataModel.ZhihuCut)
+    cutter = WordCutter.WordCut(stop_word_list='stoplist_最终使用版.txt')
+    for model in models:
+        model: DataModel.ZhihuCut
+        if 'key error' in model.answer_word_cut:
+            result_code, result, result_json = cutter.word_cut_baiduyun(model.zhihu_answer)
+            DBConnector.update_zhihu_cut_by_sid(model.sid, result)
+
+
+def vector_merge(sid):
+    models = DBConnector.query_zhihu_word2vec_by_zhihu_sid(sid)
+    if len(models) == 0:
+        return 'empty'
+    one_weibo_vector, one_weibo_vector_str_list = [], []
+    for j in range(1024):
+        one_weibo_vector.append(0.0)
+    for model in models:
+        model: DataModel.ZhihuWord2Vec
+        vector_list = model.vector.split(',')
+        if len(vector_list) != 1024:
+            continue
+        for k in range(1024):
+            one_weibo_vector[k] = one_weibo_vector[k] + float(vector_list[k])
+    for item in one_weibo_vector:
+        one_weibo_vector_str_list.append(str(item))
+    one_weibo_vector_str = ','.join(one_weibo_vector_str_list)
+    return one_weibo_vector_str
+
+
+def zhihu_vector_merge(min_sid, max_sid):
+    for i in range(min_sid, max_sid):
+        vector_merge(i)

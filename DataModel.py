@@ -1,5 +1,5 @@
 import logging
-from sqlalchemy import Column, NVARCHAR, Integer, TEXT, DATETIME, BOOLEAN, VARCHAR
+from sqlalchemy import Column, NVARCHAR, Integer, TEXT, DATETIME, BOOLEAN, VARCHAR, FLOAT
 from sqlalchemy.ext.declarative import declarative_base
 
 logging.basicConfig(format='%(asctime)s:%(levelname)s:%(message)s', level=logging.INFO)
@@ -51,10 +51,10 @@ class AMinerReference(Base):
 
 
 class MAG(Base):
-    __tablename__ = 'T_MAG'
+    __tablename__ = 't_mag'
 
     sid = Column(Integer, primary_key=True)
-    id = Column(NVARCHAR(36))
+    id = Column(NVARCHAR(40))
     title = Column(TEXT)
     venue = Column(TEXT)
     year = Column(Integer)
@@ -77,22 +77,20 @@ class MAG(Base):
 
 
 class MAGAuthor(Base):
-    __tablename__ = 'T_MAGAuthor'
+    __tablename__ = 't_mag_author'
 
     author_sid = Column(Integer, primary_key=True)
-    id = Column(NVARCHAR(36))
+    id = Column(NVARCHAR(40))
     name = Column(TEXT)
     org = Column(TEXT)
-    year = Column(Integer)
 
 
 class MAGReference(Base):
-    __tablename__ = 'T_MAGReference'
+    __tablename__ = 't_mag_reference'
 
     reference_sid = Column(Integer, primary_key=True)
-    id = Column(NVARCHAR(36))
-    reference = Column(NVARCHAR(36))
-    year = Column(Integer)
+    id = Column(NVARCHAR(40))
+    reference = Column(NVARCHAR(40))
 
 
 class Zhihu(Base):
@@ -141,6 +139,8 @@ class ZhihuCut(Base):
     zhihu_answer = Column(TEXT)
     answer_word_cut = Column(TEXT)
     words_vector = Column(TEXT)
+    top_word_cut = Column(TEXT)
+    top_words_vector = Column(TEXT)
 
 
 class ZhihuWord2Vec(Base):
@@ -149,6 +149,22 @@ class ZhihuWord2Vec(Base):
     zhihu_sid = Column(Integer)
     word = Column(VARCHAR(255))
     vector = Column(TEXT)
+
+
+class ZhihuTFIDF(Base):
+    __tablename__ = 'T_Zhihu_TF_IDF'
+    sid = Column(Integer, primary_key=True)
+    zhihu_cut_sid = Column(Integer)
+    word = Column(VARCHAR(255))
+    tf_idf = Column(FLOAT)
+
+
+class WeiboTFIDF(Base):
+    __tablename__ = 'T_Weibo_TF_IDF'
+    sid = Column(Integer, primary_key=True)
+    weibo_cut_sid = Column(Integer)
+    word = Column(VARCHAR(255))
+    tf_idf = Column(FLOAT)
 
 
 class Weibo(Base):
@@ -183,6 +199,15 @@ class WeiboClean(Base):
 
 class WeiboCut(Base):
     __tablename__ = 'T_Weibo_Cut'
+    sid = Column(Integer, primary_key=True)
+    weibo_sid = Column(Integer)
+    weibo_content = Column(TEXT)
+    word_cut = Column(TEXT)
+    words_vector = Column(TEXT)
+
+
+class WeiboCutNoShort(Base):
+    __tablename__ = 'T_Weibo_Cut_No_Short'
     sid = Column(Integer, primary_key=True)
     weibo_sid = Column(Integer)
     weibo_content = Column(TEXT)

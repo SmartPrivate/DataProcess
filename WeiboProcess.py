@@ -73,7 +73,7 @@ def weibo_process():
 
 
 def file_db_writer():
-    files=os.listdir('new_vec')
+    files = os.listdir('new_vec')
     for filename in files:
         reader = open('new_vec/{0}'.format(filename), 'r', encoding='gbk', errors='ignore')
         print('正在处理文件{0}......'.format(filename))
@@ -104,3 +104,34 @@ def file_db_writer():
                 DBConnector.db_list_writer(model_list)
                 model_list.clear()
                 list_count = 0
+
+
+def weibo_vector_merge(min_weibo_sid, max_weibo_sid):
+    db_session = DBConnector.create_db_session(DBConnector.DBName.MySQL)
+    new_session = db_session()
+    for i in range(min_weibo_sid, max_weibo_sid):
+        models = DBConnector.query_weibo_word2vec_by_weibo_sid(i)
+        if len(models) == 0:
+            continue
+        one_weibo_vector, one_weibo_vector_str_list = [], []
+        for j in range(1024):
+            one_weibo_vector.append(0.0)
+        for model in models:
+            model: DataModel.WeiboWord2Vec
+            vector_list = model.vector.split(',')
+            if len(vector_list) != 1024:
+                continue
+            for k in range(1024):
+                one_weibo_vector[k] = one_weibo_vector[k] + float(vector_list[k])
+        for item in one_weibo_vector:
+            one_weibo_vector_str_list.append(str(item))
+        one_weibo_vector_str = ','.join(one_weibo_vector_str_list)
+        new_session.query(DataModel.WeiboCut).filter(DataModel.WeiboCut.weibo_sid == i).update(
+            {DataModel.WeiboCut.words_vector: one_weibo_vector_str})
+        new_session.commit()
+        # DBConnector.update_weibo_word_cut_vector_by_sid(i, one_weibo_vector_str)
+        print('完成weibo_sid={0}'.format(i))
+    new_session.close()
+
+
+weibo_vector_merge(100000, 135211)
