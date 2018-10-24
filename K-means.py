@@ -111,13 +111,3 @@ def kmeans_result_save(filename, k):
             model_count = model_count + 1
         k_count = k_count + 1
     workbook.save('K_means_result/{2}_kmeans/{2}_k{0}_{1}.xls'.format(str(k), time_str, filename))
-
-
-# calculate_sse('weibo', start=10, stop=210, step=10)
-
-result_sid_list = calculate_kmeans('weibo', k=70)
-writer = open('weibo_sid.txt', 'a')
-for sid in result_sid_list:
-    line = ','.join(sid) + '\n'
-    writer.write(line)
-writer.close()

@@ -12,7 +12,7 @@ localhost_str = 'mssql+pyodbc://sa:900807@localhost/OpenAcademicGraphDB?driver=O
 remotehost_str = 'mssql+pyodbc://sa:Alex19900807.@192.168.22.197/WangxiaoDB?driver=ODBC+Driver+17+for+SQL+Server'
 
 DBMySQLEngineRoot: str = 'mysql+pymysql://myuser:Mc2460022.@192.168.22.197:3306/mysql'
-DBMySQLEngine: str = 'mysql+pymysql://wangxiao:xiao123123@192.168.22.197:3306/wangxiao_db'
+DBMySQLEngine: str = 'mysql+pymysql://my_admin:Alex19900807.@192.168.22.241:3306/yelp_db'
 DBSQLServerEngine: str = remotehost_str
 
 
@@ -24,6 +24,9 @@ class DBName(Enum):
 
 
 DBNameDic = {0: 'mysql', 1: 'mssql'}
+
+class Session(object):
+    pass
 
 
 def create_db_session(db_name: DBName):
@@ -243,3 +246,10 @@ def get_zhihu_sid_by_cut_sid(sid):
     new_session = db_session()
     model: DataModel.ZhihuCut = new_session.query(DataModel.ZhihuCut).filter(DataModel.ZhihuCut.sid == sid).one()
     return model.zhihu_sid
+
+
+def get_yelp_user_with_friend():
+    db_session: sessionmaker = create_db_session(DBName.MySQL)
+    new_session = db_session()
+    modelS = new_session.query(DataModel.YeplUser).filter(DataModel.YeplUser.friends != 'None').all()
+    return modelS

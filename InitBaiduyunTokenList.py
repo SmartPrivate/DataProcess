@@ -10,7 +10,4 @@ def get_access_token_str(api_key, secret_key):
     open('baiduyun_access_token.json', 'a').write(token_request.text)
 
 
-for line in open('百度AI.txt', 'r').readlines():
-    key = line.split('\t')[0]
-    secret = line.split('\t')[1].replace('\n','')
-    get_access_token_str(api_key=key, secret_key=secret)
+get_access_token_str(api_key='VcI6kj211iHVwbSkCcUctPaK', secret_key='ewTduLnYpTbfKs5ZdvqEDDaCTBBjhwum')

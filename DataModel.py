@@ -250,3 +250,73 @@ class DBLP(Base):
     number = Column(NVARCHAR(50))
     url = Column(TEXT)
     ee = Column(TEXT)
+
+
+class NEDDContent(Base):
+    __tablename__ = 't_nedd'
+
+    sid = Column(Integer, primary_key=True)
+    da = Column(DATETIME)
+    oa = Column(TEXT)
+    unique_id = Column(TEXT)
+    doc_delivery_number = Column(VARCHAR(20))
+    journal_iso = Column(TEXT)
+    usage_count_since_2013 = Column(Integer)
+    usage_count_last_180_days = Column(Integer)
+    times_cited = Column(Integer)
+    number_of_cited_references = Column(Integer)
+    cited_references = Column(TEXT)
+    funding_text = Column(TEXT)
+    funding_acknowledgement = Column(TEXT)
+    orcid_numbers = Column(TEXT)
+    researcherid_numbers = Column(TEXT)
+    author_email = Column(TEXT)
+    web_of_science_categories = Column(TEXT)
+    research_areas = Column(TEXT)
+    keywords = Column(TEXT)
+    keywords_plus = Column(TEXT)
+    issn = Column(TEXT)
+    article_number = Column(TEXT)
+    doi = Column(TEXT)
+    affiliation = Column(TEXT)
+    language = Column(VARCHAR(20))
+    type_ = Column(TEXT)
+    address = Column(TEXT)
+    publisher = Column(TEXT)
+    abstract = Column(TEXT)
+    month = Column(TEXT)
+    number = Column(TEXT)
+    volume = Column(TEXT)
+    year = Column(Integer)
+    journal = Column(TEXT)
+    title = Column(TEXT)
+    author = Column(TEXT)
+    entrytype = Column(TEXT)
+    id_ = Column(TEXT)
+
+
+class NEDDAuthorContent(Base):
+    __tablename__ = 't_nedd_authors'
+
+    sid = Column(Integer, primary_key=True)
+    nedd_sid = Column(Integer)
+    author = Column(TEXT)
+    unique_id = Column(TEXT)
+
+
+class YelpUser(Base):
+    __tablename__ = 't_yelp_user'
+
+    sid = Column(Integer, primary_key=True)
+    user_id = Column(VARCHAR(22))
+    name = Column(VARCHAR(255))
+    friends = Column(TEXT)
+
+
+class YelpFriend(Base):
+    __tablename__ = 't_yelp_friend'
+
+    sid = Column(Integer, primary_key=True)
+    user_id = Column(VARCHAR(22))
+    friend_user_id = Column(VARCHAR(22))
+    is_in_t_user=Column(Integer)

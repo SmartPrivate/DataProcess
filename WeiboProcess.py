@@ -1,15 +1,23 @@
 import logging
+
+import redis
+
 import DataModel
 import datetime
 import DBConnector
 import re
 import time
 import os
+import WordCutter
 
 logging.basicConfig(format='%(asctime)s:%(levelname)s:%(message)s', level=logging.INFO)
 
 
 def weibo_process():
+    """
+    微博数据清洗
+    :return:
+    """
     reader = open(r'C:\\Users\\macha\\Desktop\\weibo.txt', 'r', errors='replace', encoding='gbk')
     model_list = []
     while True:
@@ -107,6 +115,12 @@ def file_db_writer():
 
 
 def weibo_vector_merge(min_weibo_sid, max_weibo_sid):
+    """
+    微博向量聚合
+    :param min_weibo_sid:
+    :param max_weibo_sid:
+    :return:
+    """
     db_session = DBConnector.create_db_session(DBConnector.DBName.MySQL)
     new_session = db_session()
     for i in range(min_weibo_sid, max_weibo_sid):
@@ -134,4 +148,20 @@ def weibo_vector_merge(min_weibo_sid, max_weibo_sid):
     new_session.close()
 
 
-weibo_vector_merge(100000, 135211)
+def get_weibo_word_pos():
+    r = redis.Redis(host='192.168.22.241', port=6379, db=1, encoding='gbk', decode_responses=True)
+    weibo_models = DBConnector.query_all(DataModel.WeiboCutNoShort)
+    word_processer = WordCutter.WordCut()
+    writer = open('no_word_pos.csv', 'a', encoding='gbk')
+    for model in weibo_models:
+        model: DataModel.WeiboCutNoShort
+        words = model.word_cut.replace('\t', ',')
+        print(len(words.split(',')))
+        result = word_processer.get_word_speech(words)
+        if type(result) is str:
+            continue
+        print(len(result))
+        print('Finish weibo_sid = {0}'.format(model.weibo_sid))
+
+
+get_weibo_word_pos()
