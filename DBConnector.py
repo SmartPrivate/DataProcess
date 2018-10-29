@@ -12,7 +12,8 @@ localhost_str = 'mssql+pyodbc://sa:900807@localhost/OpenAcademicGraphDB?driver=O
 remotehost_str = 'mssql+pyodbc://sa:Alex19900807.@192.168.22.197/WangxiaoDB?driver=ODBC+Driver+17+for+SQL+Server'
 
 DBMySQLEngineRoot: str = 'mysql+pymysql://myuser:Mc2460022.@192.168.22.197:3306/mysql'
-DBMySQLEngine: str = 'mysql+pymysql://my_admin:Alex19900807.@192.168.22.241:3306/yelp_db'
+# DBMySQLEngine: str = 'mysql+pymysql://my_admin:Alex19900807.@192.168.22.241:3306/wangxiao_db'
+DBMySQLEngine: str = 'mysql+pymysql://root:Alex19900807.@localhost:3306/wangxiao_db'
 DBSQLServerEngine: str = remotehost_str
 
 

@@ -64,10 +64,14 @@ class WordCut(object):
         if 'error_code' in result_json.keys():
             return result_json['error_msg']
         for item in result_json['items']:
+            if item['item'] == ',':
+                continue
+            if item['item'] == ' ':
+                continue
             if len(item['pos']) != 0:
-                result_list.append((process_word, item['pos']))
+                result_list.append((item['item'], item['pos']))
             elif len(item['ne']) != 0:
-                result_list.append((process_word, item['ne']))
+                result_list.append((item['item'], item['ne']))
             else:
-                result_list.append((process_word, 0))
+                result_list.append((item['item'], 0))
         return result_list

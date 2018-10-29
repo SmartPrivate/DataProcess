@@ -149,18 +149,22 @@ def weibo_vector_merge(min_weibo_sid, max_weibo_sid):
 
 
 def get_weibo_word_pos():
-    r = redis.Redis(host='192.168.22.241', port=6379, db=1, encoding='gbk', decode_responses=True)
+    r = redis.Redis(host='192.168.47.128', port=6379, db=2, encoding='utf-8', decode_responses=True)
     weibo_models = DBConnector.query_all(DataModel.WeiboCutNoShort)
+    print('Loaded {0} records'.format(str(len(weibo_models))))
     word_processer = WordCutter.WordCut()
     writer = open('no_word_pos.csv', 'a', encoding='gbk')
     for model in weibo_models:
         model: DataModel.WeiboCutNoShort
         words = model.word_cut.replace('\t', ',')
-        print(len(words.split(',')))
         result = word_processer.get_word_speech(words)
         if type(result) is str:
             continue
-        print(len(result))
+        for key, value in result:
+            if value == '':
+                writer.write(key + '\n')
+            else:
+                r.set(key, value)
         print('Finish weibo_sid = {0}'.format(model.weibo_sid))
 
 
